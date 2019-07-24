@@ -1,0 +1,5 @@
+controller_list:
+  - name: "arm"
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    joints: [id_1, id_2, id_3, id_4, id_5, id_6]

@@ -24,7 +24,7 @@ open_manipulator:
     type: joint_state_controller/JointStateController
     publish_rate: 50
   controller_list:
-    - name: openmanipulator_arm_controller
+    - name: arm_controller
       action_ns: follow_joint_trajectory
       default: True
       type: FollowJointTrajectory
