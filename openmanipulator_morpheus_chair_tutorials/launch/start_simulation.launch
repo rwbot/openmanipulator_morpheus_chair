@@ -1,0 +1,35 @@
+<launch>
+  <!-- These are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find assem_urdf10_description)/worlds/empty_kinect.world"/>
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="headless" value="$(arg headless)"/>
+  </include>
+
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <param name="robot_description"
+   command="$(find xacro)/xacro --inorder '$(find open_manipulator_support_description)/urdf/open_manipulator_support.urdf.xacro'"/>
+
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+     args="-urdf -model assem_urdf10_description -z 0.02 -param robot_description"/>
+
+  <node name="tf_footprint_base" pkg="tf" type="static_transform_publisher" args="0 0 0 0 0 0 base_link base_footprint 40" />
+
+  <node args="0.85931 0.242068 1.04639 2.1 0 -1.57 /base_link /camera_depth_optical_frame 20" name="kinect_base_link" pkg="tf" type="static_transform_publisher" />
+
+  <!-- ros_control robotis manipulator launch file -->
+
+  <include file="$(find openmanipulator_morpheus_chair_tutorials)/launch/trajectory_controller.launch"/>
+
+</launch>
